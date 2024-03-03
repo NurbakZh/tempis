@@ -17,9 +17,10 @@ jobs:
       - name: Install dependencies
         run: poetry install; poetry add pytest; poetry add pytest-mock; poetry add pytest-cov
       - name: Run pytest-cov
-        run: poetry run pytest tests/ --cov=app --cov-branch
+        run: poetry run pytest tests/ --cov=app --cov-branch --cov-report json:coverage.json
       - name: Check coverage threshold
         run: |
-          coverage=$(poetry run pytest tests/ --cov=app --cov-branch --cov-report=xml | grep -oP 'total="[0-9]+.[0-9]+"' | grep -oP '[0-9]+\.[0-9]+')
-          if (( $(echo "$coverage < 85" | bc -l) )); then
+          coverage=$(jq -r '.totals.percent_covered' coverage.json)
+          if [ $(echo "$coverage < 85" | bc -l) -eq 1 ]; then
             exit 1
+          fi
