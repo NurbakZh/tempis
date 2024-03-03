@@ -1,0 +1,14 @@
+{
+    "tests": [
+      {
+        "name": "Regression",
+        "setup": "sudo -H pip3 install poetry ; poetry install",
+        "run": "poetry run pytest .",
+        "input": "",
+        "output": "",
+        "comparison": "included",
+        "timeout": 5,
+        "points": 1
+      }
+    ]
+  }

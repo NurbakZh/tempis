@@ -1,0 +1,25 @@
+name: lab-coverage
+
+on: [push]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.6'
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: '1.7.1'
+      - name: Install dependencies
+        run: poetry install; poetry add pytest; poetry add pytest-mock; poetry add pytest-cov
+      - name: Run pytest-cov
+        run: poetry run pytest tests/ --cov=app --cov-branch
+      - name: Check coverage threshold
+        run: |
+          coverage=$(poetry run pytest tests/ --cov=app --cov-branch --cov-report=xml | grep -oP 'total="[0-9]+.[0-9]+"' | grep -oP '[0-9]+\.[0-9]+')
+          if (( $(echo "$coverage < 85" | bc -l) )); then
+            exit 1
