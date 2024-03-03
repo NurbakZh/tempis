@@ -21,6 +21,8 @@ jobs:
       - name: Check coverage threshold
         run: |
           coverage=$(jq -r '.totals.percent_covered' coverage.json)
-          if [ $(echo "$coverage < 85" | bc -l) -eq 1 ]; then
+          if [ $(echo "$coverage >= 85" | bc -l) -eq 1 ]; then
+            echo "coverage $coverage% is ok"
+          else
             exit 1
           fi
